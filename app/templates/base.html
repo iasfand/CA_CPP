@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %} | SkyPort {% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Ensures the body stretches to fill the viewport */
+        html, body {
+            height: 100%;
+        }
+        /* Ensures the main content takes available space between header and footer */
+        #content-wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100%;
+        }
+        #content {
+            flex: 1;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+    <div id="content-wrapper">
+        <!-- Navbar -->
+        <nav class="bg-blue-600 text-white shadow-lg">
+            <div class="container mx-auto px-4 py-4">
+                <div class="flex justify-between">
+                    <div>
+                        <a href="/" class="text-lg font-bold">SkyPort</a>
+                    </div>
+                    <div>
+                        <a href="/" class="px-4 py-2 hover:bg-blue-700 rounded">Home</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Content -->
+        <main id="content" class="container mx-auto px-4 py-8">
+            {% block content %}{% endblock %}
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-blue-600 text-white py-4">
+            <div class="container mx-auto text-center">
+                <p>&copy; 2024 SkyPort. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>
