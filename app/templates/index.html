@@ -1,12 +1,112 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ title }}</title>
-</head>
-<body>
-    <h1>Welcome to the Live Flight Tracker</h1>
-    <p>Search for live flights and view their status.</p>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}Airports - SkyPort{% endblock %}
+
+{% block content %}
+<h1 class="text-2xl font-bold mb-6">Airports</h1>
+
+{% if info.items %}
+<table class="table-auto w-full bg-white shadow-md rounded border-collapse">
+    <thead>
+        <tr class="text-left bg-gray-700 text-white">
+            <th class="px-4 py-2">Name</th>
+            <th class="px-4 py-2">ICOA Code</th>
+            <th class="px-4 py-2">Country</th>
+            <th class="px-4 py-2">Total runways</th>
+            <th class="px-4 py-2 "></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for airport in info['items'] %}
+        <tr>
+            <td class="border px-4 py-2">
+                <a href="/airport/{{ airport.id }}" target="_blank" class="text-blue-600 hover:underline">{{
+                    airport.name }}</a>
+            </td>
+            <td class="border px-4 py-2">{{ airport.icaoCode }}</td>
+            <td class="border px-4 py-2">
+                <img src="https://flagcdn.com/{{ airport.country|lower }}.svg" width="50" alt="{{ airport.country }}"
+                    class="h-6">
+            </td>
+            <td class="border px-4 py-2">{{ airport.total_runways }}</td>
+            <td class="border px-4 py-2 text-right">
+                <!-- Plane Icon -->
+                {% if airport.icaoCode != '-' %}
+                <a href="/info/{{ airport.icaoCode }}"
+                    class="inline-flex items-center justify-center w-10 h-10 text-blue-600 hover:text-blue-800"
+                    title="View Airport">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="w-6 h-6">
+                        <path
+                            d="M2.4 12l9.6-8.4c.5-.5 1.5-.2 1.5.6v6.3L20.8 4c.4-.4 1.1-.4 1.5 0s.4 1.1 0 1.5l-7.3 7.3 6.3 6.3c.4.4.4 1.1 0 1.5s-1.1.4-1.5 0l-6.3-6.3-7.3 7.3c-.4.4-1.1.4-1.5 0s-.4-1.1 0-1.5l6.3-6.3H3c-.8 0-1.1-1-.6-1.5z" />
+                    </svg>
+                </a>
+                {% endif %}
+
+
+                <!-- Google Maps Icon -->
+                <a href="{{ airport.google_maps_link }}" target="_blank"
+                    class="inline-flex items-center justify-center w-10 h-10 text-blue-600 hover:text-blue-800"
+                    title="Open in Google Maps">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="w-6 h-6">
+                        <path
+                            d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                    </svg>
+
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+
+</table>
+{% else %}
+<p class="text-red-600">No airport data available.</p>
+{% endif %}
+
+
+<div class="mt-4 p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+    <div class="flex flex-col items-center">
+        <!-- Help text -->
+        <span class="text-sm text-gray-700 dark:text-gray-400">
+            Showing <span class="font-semibold text-gray-900 dark:text-white">{{ info.from_page }}</span> to <span
+                class="font-semibold text-gray-900 dark:text-white">{{ info.to_page }}</span> of <span
+                class="font-semibold text-gray-900 dark:text-white">{{ info.total_items }}</span> Entries
+        </span>
+        <!-- Buttons -->
+        <div class="inline-flex mt-2 xs:mt-0">
+            <!-- Prev Button -->
+            {% if info.current_page > 1 %}
+            <a href="?page={{ info.current_page - 1 }}"
+                class="flex items-center justify-center px-4 h-10 text-base font-medium text-white bg-gray-800 rounded-s hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                Prev
+            </a>
+            {% else %}
+            <button disabled
+                class="flex items-center justify-center px-4 h-10 text-base font-medium text-white bg-gray-400 rounded-s cursor-not-allowed">
+                Prev
+            </button>
+            {% endif %}
+
+            <!-- Current Page Button -->
+            <button disabled
+                class="flex items-center justify-center px-4 h-10 text-base font-medium text-white bg-gray-800 border-0 border-s border-gray-700 hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                {{ info.current_page }}
+            </button>
+
+            <!-- Next Button -->
+            {% if info.current_page < info.total_pages %} <a href="?page={{ info.current_page + 1 }}"
+                class="flex items-center justify-center px-4 h-10 text-base font-medium text-white bg-gray-800 border-0 border-s border-gray-700 rounded-e hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                Next
+                </a>
+                {% else %}
+                <button disabled
+                    class="flex items-center justify-center px-4 h-10 text-base font-medium text-white bg-gray-400 rounded-e cursor-not-allowed">
+                    Next
+                </button>
+                {% endif %}
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
