@@ -26,12 +26,23 @@
         <!-- Navbar -->
         <nav class="bg-blue-600 text-white shadow-lg">
             <div class="container mx-auto px-4 py-4">
-                <div class="flex justify-between">
+                <div class="flex justify-between items-center">
                     <div>
                         <a href="/" class="text-lg font-bold">SkyPort</a>
                     </div>
-                    <div>
+                    <div class="flex items-center">
                         <a href="/" class="px-4 py-2 hover:bg-blue-700 rounded">Home</a>
+                        <div class="relative ml-4">
+                            <button id="userMenuButton" class="flex items-center focus:outline-none">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="w-6 h-6" viewBox="0 0 24 24">
+                                    <path d="M12 12c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm0 2c-3.33 0-10 1.68-10 5v1h20v-1c0-3.32-6.67-5-10-5z"/>
+                                </svg>
+                            </button>
+                            <div id="userMenu" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg hidden">
+                                <a href="/login" class="block px-4 py-2 text-gray-800 hover:bg-blue-100">Login</a>
+                                <a href="/register" class="block px-4 py-2 text-gray-800 hover:bg-blue-100">Register</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -49,5 +60,18 @@
             </div>
         </footer>
     </div>
+
+    <!-- Dropdown Script -->
+    <script>
+        const userMenuButton = document.getElementById('userMenuButton');
+        const userMenu = document.getElementById('userMenu');
+
+        userMenuButton.addEventListener('click', () => {
+            userMenu.classList.toggle('hidden');
+        });
+        
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@1.6.5/dist/flowbite.min.js"></script>
+
 </body>
 </html>
