@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request
 from app.clients.openaip_client import fetch_openaip_data
 from app.libraries.preprocess import process_airports_data
+import json
 
 main = Blueprint("main", __name__)
 
@@ -9,9 +10,14 @@ def index():
     # Pagination parameters
     page = request.args.get("page", default=1, type=int)
     limit = request.args.get("limit", default=100, type=int)
+    country = request.args.get("country", default=None, type=str)
 
+
+    # Load countries from static JSON file
+    with open("app/data/countries.json") as f:
+        countries = json.load(f)
     # Fetch airports with the specified parameters
-    data = fetch_openaip_data("airports", page=page, limit=limit)
+    data = fetch_openaip_data("airports", page=page, limit=limit , country=country)
     airports = data.get("items", [])
     total_items = data.get("totalCount", 0)
     total_pages = data.get("totalPages" , (total_items + limit - 1) // limit)  # Calculate total pages
@@ -28,5 +34,7 @@ def index():
             "to_page": to_page,
             "total_items": total_items,
             "total_pages": total_pages,
+            "countries": countries,
+            "selected_country": country,
         },
     )

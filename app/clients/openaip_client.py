@@ -1,15 +1,15 @@
 import requests
 from flask import current_app
 
-def fetch_openaip_data(endpoint, page=1, limit=100):
-    print("fetch_openaip_data" , endpoint , page , limit)
+def fetch_openaip_data(endpoint, page=1, limit=100, country=None):
     """
-    Fetch  data from OpenAIP API.
+    Fetch data from OpenAIP API.
 
     Args:
         endpoint (str): API endpoint to fetch data from.
         page (int): Page number for pagination.
         limit (int): Number of results per page.
+        country (str): Optional country code to filter results.
 
     Returns:
         dict: Parsed JSON response from the API or None in case of an error.
@@ -23,6 +23,10 @@ def fetch_openaip_data(endpoint, page=1, limit=100):
         "page": page,
         "limit": limit
     }
+
+    # Add country filter if provided
+    if country:
+        params["country"] = country
 
     try:
         response = requests.get(base_url, headers=headers, params=params)

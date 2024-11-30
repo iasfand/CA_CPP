@@ -3,7 +3,24 @@
 {% block title %}Airports - SkyPort{% endblock %}
 
 {% block content %}
-<h1 class="text-2xl font-bold mb-6">Airports</h1>
+<div class="flex justify-between items-center mb-6">
+    <!-- Title -->
+    <h1 class="text-2xl font-bold">Airports</h1>
+
+    <!-- Country Filter -->
+    <div>
+        <label for="country-filter" class="sr-only">Filter by Country</label>
+        <select id="country-filter" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="">All Countries</option>
+            {% for country_code, country_name in info.countries.items() %}
+            <option value="{{ country_code }}" {% if request.args.get('country') == country_code %}selected{% endif %}>
+                {{ country_name }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
+
 
 {% if info.items %}
 <table class="table-auto w-full bg-white shadow-md rounded border-collapse">
@@ -30,17 +47,18 @@
             </td>
             <td class="border px-4 py-2">{{ airport.total_runways }}</td>
             <td class="border px-4 py-2 text-right">
-                {% if airport.icaoCode != '-' %}
-                <a href="/airport/{{ airport.icaoCode }}"
-                    class="inline-flex items-center justify-center w-10 h-10 text-blue-600 hover:text-blue-800"
-                    title="View Airport">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1792 1792" class="w-6 h-6" fill="currentColor">
-                        <path
-                            d="M1397 1324q0-87-149-236l-240-240 143-746q0-14-9-23l-112-112q-9-9-23-9-21 0-29 18L753 593 508 348q68-238 68-252 0-14-9-23L503 9q-9-9-23-9-18 0-28 16L297 296 17 451q-17 9-17 28 0 14 9 23l64 65q9 9 23 9 14 0 252-68l68 252L18 1027q-18 8-18 29 0 14 9 23l64 64q9 9 23 9l746-143 240 240q149 149 236 149 32 0 52.5-20.5T1397 1324z" />
-                    </svg>
-                </a>
-
-                {% endif %}
+                <div class="relative inline-block">
+                    <button data-tooltip-target="tooltip-to-mark" class="text-gray-500 hover:text-red-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c2.207-2.207 5.79-2.207 7.997 0 2.207 2.207 2.207 5.79 0 7.997L12 19.97 5.954 10.924c-2.207-2.207-2.207-5.79 0-7.997 2.207-2.207 5.79-2.207 7.997 0z" />
+                        </svg>
+                    </button>
+                    <div id="tooltip-to-mark" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+                        Mark as Favorite
+                        <div class="tooltip-arrow" data-popper-arrow></div>
+                    </div>
+                </div>
+                
                 <!-- Google Maps Icon -->
                 <a href="{{ airport.google_maps_link }}" target="_blank"
                     class="inline-flex items-center justify-center w-10 h-10 text-blue-600 hover:text-blue-800"
@@ -105,5 +123,25 @@
     </div>
 </div>
 
+
+<script>
+    document.getElementById("country-filter").addEventListener("change", function () {
+        const selectedCountry = this.value;
+        const url = new URL(window.location.href);
+
+        // Update 'country' parameter
+        if (selectedCountry) {
+            url.searchParams.set("country", selectedCountry);
+        } else {
+            url.searchParams.delete("country");
+        }
+
+        // Reset 'page' parameter to 1
+        url.searchParams.set("page", 1);
+
+        // Reload the page with the updated URL
+        window.location.href = url.toString();
+    });
+</script>
 
 {% endblock %}
