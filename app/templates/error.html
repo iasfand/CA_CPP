@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Error - SkyPort{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-center bg-gray-100 min-h-[80vh]">
+    <div class="bg-white rounded-lg  p-6 max-w-md text-center">
+        <!-- Error Icon -->
+        <div class="text-red-600 mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="w-16 h-16 mx-auto" viewBox="0 0 24 24">
+                <path d="M11.001 10h2v5h-2v-5zm0-3h2v2h-2v-2zm10.646 15.293l-19.292-19.292 1.414-1.414 19.292 19.292-1.414 1.414zm-12.292-.293h6v-2h-6v2zm-1-4h8l1-16h-10l1 16z"/>
+            </svg>
+        </div>
+
+        <!-- Error Title -->
+        <h1 class="text-2xl font-bold text-gray-800 mb-2">{{ title or "Oops! Something went wrong." }}</h1>
+
+        <!-- Error Message -->
+        <p class="text-gray-600 mb-4">
+            {{ message or "The page you are looking for could not be found or an error occurred." }}
+        </p>
+
+        <!-- Back to Home Button -->
+        <a href="/" class="inline-block bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700">
+            Go Back to Home
+        </a>
+    </div>
+</div>
+{% endblock %}
