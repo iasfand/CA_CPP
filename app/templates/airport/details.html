@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}{{ airport.name }} - SkyPort{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-6">
+
+    <!-- Airport Name and Add to Favorites -->
+    <div class="flex justify-between items-center mb-4">
+        <h1 class="text-3xl font-bold">{{ airport.name }}</h1>
+        <div class="relative inline-block">
+            <form action="/airport/{{ airport._id }}/add_to_favorites" method="POST" class="inline-block">
+                <button data-tooltip-target="tooltip-to-mark" class="text-gray-500 hover:text-red-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                        stroke-width="2" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M11.049 2.927c2.207-2.207 5.79-2.207 7.997 0 2.207 2.207 2.207 5.79 0 7.997L12 19.97 5.954 10.924c-2.207-2.207-2.207-5.79 0-7.997 2.207-2.207 5.79-2.207 7.997 0z" />
+                    </svg>
+                </button>
+                <div id="tooltip-to-mark" role="tooltip"
+                    class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+                    Mark as Favorite
+                    <div class="tooltip-arrow" data-popper-arrow></div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- General Info -->
+    <div class="mb-6">
+        <p class="flex items-center">
+            <strong class="mr-2">Country:</strong>
+            <img src="https://flagcdn.com/{{ airport.country|lower }}.svg" width="32" alt="{{ airport.country }}">
+        </p>
+        <p><strong>Type:</strong> {{ airport.type }}</p>
+        <p><strong>Traffic Type:</strong> {{ airport.trafficType | join(", ") }}</p>
+        <p><strong>Elevation:</strong> {{ airport.elevation.value }} meters</p>
+        <p><strong>Coordinates:</strong>
+            <a href="https://www.google.com/maps/search/?api=1&query={{ airport.geometry.coordinates[1] }},{{ airport.geometry.coordinates[0] }}"
+                target="_blank" class="text-blue-600 hover:underline">
+                View on Google Maps
+            </a>
+        </p>
+    </div>
+
+    <!-- Runways Info -->
+    <h2 class="text-2xl font-bold mb-4">Runways</h2>
+    <table class="table-auto w-full bg-white shadow-md rounded border-collapse">
+        <thead>
+            <tr class="text-left bg-gray-700 text-white">
+                <th class="px-4 py-2">Designator</th>
+                <th class="px-4 py-2">True Heading</th>
+                <th class="px-4 py-2">Main Runway</th>
+                <th class="px-4 py-2">Length (m)</th>
+                <th class="px-4 py-2">Width (m)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for runway in airport.runways %}
+            <tr>
+                <td class="border px-4 py-2">{{ runway.designator }}</td>
+                <td class="border px-4 py-2">{{ runway.trueHeading }}</td>
+                <td class="border px-4 py-2">{{ "Yes" if runway.mainRunway else "No" }}</td>
+                <td class="border px-4 py-2">{{ runway.dimension.length.value }}</td>
+                <td class="border px-4 py-2">{{ runway.dimension.width.value }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Memories Section -->
+    <div class="mt-8">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-2xl font-bold">Memories</h2>
+            <form action="/airport/{{ airport._id }}/add_memories" method="POST" class="inline-block">
+                <button class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none">
+                    Add Memories
+                </button>
+            </form>
+        </div>
+
+        <!-- Tabs -->
+        <div class="flex border-b mb-4">
+            <button class="py-2 px-4 text-blue-600 border-b-2 border-blue-600 focus:outline-none">All</button>
+            <button class="py-2 px-4 text-gray-600 hover:text-blue-600 focus:outline-none">My Memories</button>
+        </div>
+
+        <!-- Memories Content -->
+        <div>
+            <p class="text-gray-500">[Placeholders for memories content]</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
