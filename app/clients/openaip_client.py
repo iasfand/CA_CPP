@@ -35,3 +35,25 @@ def fetch_openaip_data(endpoint, page=1, limit=100, country=None):
     except requests.RequestException as e:
         current_app.logger.error(f"OpenAIP API error: {e}")
         return None
+
+
+def fetch_airport(airport_id):
+    """
+    Fetch a single airport by its ID from OpenAIP API.
+
+    Args:
+        airport_id (str): The unique ID of the airport.
+
+    Returns:
+        dict: Parsed JSON response containing the airport details or None in case of an error.
+    """
+    base_url = f"{current_app.config['OPENAIP_API_URL']}/airports/{airport_id}?apiKey={current_app.config['OPENAIP_API_KEY']}"
+    print(base_url)
+    try:
+        response = requests.get(base_url)
+        response.raise_for_status()
+        data = response.json()
+        return data
+    except requests.RequestException as e:
+        current_app.logger.error(f"Error fetching airport ID {airport_id}: {e}")
+        return None
