@@ -16,9 +16,11 @@ processor = AirportProcessor()
 @airport.route("/airport/<airport_id>")
 def get_airport(airport_id):
     try:
+        current_app.logger.info(f"Fetching details for airport ID: {airport_id}")
         # Fetch airport data
         airport_data = fetch_airport(airport_id)
         if not airport_data:
+            current_app.logger.warning(f"Airport not found: {airport_id}")
             return render_template("error.html", message="Airport not found"), 404
 
         # Check if airport is a favorite for the current user
@@ -31,12 +33,16 @@ def get_airport(airport_id):
         # Fetch memories based on the filter
         memories = fetch_memories(airport_id, user_id)
 
+        current_app.logger.info(
+            f"Loaded {len(memories)} memories for airport ID: {airport_id}, filter: {filter_type}"
+        )
+
         return render_template(
             "details.html", airport=airport_data, memories=memories, filter_type=filter_type
         )
 
     except Exception as e:
-        current_app.logger.error(f"Error fetching airport details: {e}")
+        current_app.logger.error(f"Error fetching airport details for ID {airport_id}: {e}")
         return render_template("error.html", message="An error occurred"), 500
 
 
@@ -54,6 +60,9 @@ def add_to_favorites(airport_id):
         response = table.get_item(Key={"user_id": user_id, "airport_id": airport_id})
 
         if "Item" in response:
+            current_app.logger.info(
+                f"User {user_id} attempted to re-add favorite airport {airport_id}."
+            )
             flash(f"'{airport_name}' is already in your favorites.", "info")
             return redirect(request.referrer or "/")
 
@@ -66,6 +75,9 @@ def add_to_favorites(airport_id):
         }
 
         table.put_item(Item=item)
+        current_app.logger.info(
+            f"User {user_id} added airport {airport_id} ({airport_name}) to favorites."
+        )
         flash(f"'{airport_name}' has been added to your favorites!", "success")
         return redirect(request.referrer or "/")
     except Exception as e:
@@ -83,6 +95,9 @@ def remove_from_favorites(airport_id):
         table = current_app.dynamodb.Table("skyport_favs")
         table.delete_item(Key={"user_id": user_id, "airport_id": airport_id})
 
+        current_app.logger.info(
+            f"User {user_id} removed airport {airport_id} from favorites."
+        )
         flash("Airport removed from your favorites.", "success")
         return redirect(request.referrer or "/")
     except Exception as e:
@@ -103,6 +118,7 @@ def favorites():
         )
 
         favorites = response.get("Items", [])
+        current_app.logger.info(f"User {user_id} fetched {len(favorites)} favorite airports.")
         return render_template("favorites.html", favorites=favorites)
     except Exception as e:
         current_app.logger.error(f"Error fetching favorites: {e}")
@@ -118,6 +134,7 @@ def add_memories(airport_id):
         file = request.files["photo"]
 
         if not file:
+            current_app.logger.warning(f"No file selected for memory upload by user ID: {user_id}")
             flash("No file selected.", "error")
             return redirect(url_for("airport.get_airport", airport_id=airport_id))
 
@@ -133,6 +150,9 @@ def add_memories(airport_id):
             unique_filename,
             ExtraArgs={"ContentType": file.content_type},
         )
+        current_app.logger.info(
+            f"Uploaded memory to S3 for user {user_id}, airport {airport_id}, file: {unique_filename}"
+        )
 
         # Save metadata to DynamoDB
         dynamodb = current_app.dynamodb.Table(current_app.config["DYNAMODB_MEMO_TABLE_NAME"])
@@ -145,11 +165,14 @@ def add_memories(airport_id):
                 "uploaded_at": datetime.datetime.utcnow().isoformat(),
             }
         )
+        current_app.logger.info(
+            f"Saved memory metadata to DynamoDB for user {user_id}, airport {airport_id}"
+        )
 
         flash("Memory uploaded successfully!", "success")
         return redirect(url_for("airport.get_airport", airport_id=airport_id))
     except Exception as e:
-        current_app.logger.error(f"Error uploading memory: {e}")
+        current_app.logger.error(f"Error uploading memory for user ID {user_id}, airport ID {airport_id}: {e}")
         flash("An error occurred while uploading the memory. Please try again.", "error")
         return redirect(url_for("airport.get_airport", airport_id=airport_id))
 
@@ -160,7 +183,6 @@ def fetch_memories(airport_id, user_id=None):
         s3_client = current_app.s3_client
 
         key_condition = boto3.dynamodb.conditions.Key("airport_id").eq(airport_id)
-
         response = table.query(KeyConditionExpression=key_condition)
         items = response.get("Items", [])
 
@@ -177,7 +199,10 @@ def fetch_memories(airport_id, user_id=None):
                 ExpiresIn=3600,
             )
 
+        current_app.logger.info(
+            f"Fetched {len(items)} memories for airport ID {airport_id}, user ID: {user_id}"
+        )
         return items
     except Exception as e:
-        current_app.logger.error(f"Error fetching memories: {e}")
+        current_app.logger.error(f"Error fetching memories for airport ID {airport_id}: {e}")
         return []

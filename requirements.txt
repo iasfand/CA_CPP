@@ -5,3 +5,4 @@ boto3
 flask-login==0.6.2
 werkzeug==2.3.7
 aiobotocore
+watchtower
