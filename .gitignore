@@ -165,3 +165,11 @@ cython_debug/
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
+
+# Local .env files
+!.env
+
+# Ignore AWS CLI configuration and credentials
+.aws/
+.aws/config
+.aws/credentials
