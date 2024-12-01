@@ -94,23 +94,75 @@
     <div class="mt-8">
         <div class="flex justify-between items-center mb-4">
             <h2 class="text-2xl font-bold">Memories</h2>
+            {% if session.get("logged_in") %}
+            <form action="/airport/{{ airport._id }}/add_memories" method="POST" enctype="multipart/form-data"
+                class="inline-block" id="memory-upload-form">
+                <input type="file" name="photo" accept="image/*" required class="hidden" id="photo-upload"
+                    onchange="autoSubmitForm()">
+                <label for="photo-upload"
+                    class="bg-blue-600 text-white py-2 px-4 rounded-lg cursor-pointer hover:bg-blue-700 focus:outline-none">
+                    Add Memories
+                </label>
+            </form>
+            {% else %}
             <form action="/airport/{{ airport._id }}/add_memories" method="POST" class="inline-block">
                 <button class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none">
                     Add Memories
                 </button>
             </form>
+            {% endif %}
         </div>
 
         <!-- Tabs -->
         <div class="flex border-b mb-4">
-            <button class="py-2 px-4 text-blue-600 border-b-2 border-blue-600 focus:outline-none">All</button>
-            <button class="py-2 px-4 text-gray-600 hover:text-blue-600 focus:outline-none">My Memories</button>
+            <!-- All Memories Tab -->
+            <a href="?filter=all"
+                class="py-2 px-4 {{ 'text-blue-600 border-b-2 border-blue-600' if filter_type == 'all' else 'text-gray-600 hover:text-blue-600' }} focus:outline-none">
+                All
+            </a>
+        
+            <!-- My Memories Tab -->
+            {% if session.get("logged_in") %}
+            <a href="?filter=mine"
+                class="py-2 px-4 {{ 'text-blue-600 border-b-2 border-blue-600' if filter_type == 'mine' else 'text-gray-600 hover:text-blue-600' }} focus:outline-none">
+                My Memories
+            </a>
+            {% endif %}
         </div>
+        
 
         <!-- Memories Content -->
-        <div>
-            <p class="text-gray-500">[Placeholders for memories content]</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {% if memories %}
+                {% for memory in memories %} 
+                <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+                    <img src="{{ memory.photo_url }}" alt="Memory photo" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <p class="text-gray-700 text-sm">
+                            Uploaded by: {{ "You" if memory.user_id == session.get("user_id") else "Another User" }}
+                        </p>
+                        <p class="text-gray-500 text-xs">Uploaded on: {{ memory.uploaded_at|format_date_time }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-gray-500">No memories found for this airport.</p>
+            {% endif %}
         </div>
+        
     </div>
 </div>
+
+<script>
+    function autoSubmitForm() {
+        const form = document.getElementById('memory-upload-form');
+        const fileInput = document.getElementById('photo-upload');
+        if (fileInput.files.length > 0) {
+            // Automatically submit the form when a file is selected
+            form.submit();
+        } else {
+            alert("Please select a file to upload.");
+        }
+    }
+</script>
 {% endblock %}
