@@ -1,7 +1,9 @@
 from app import create_app
 import config
 
-app = create_app()
+# Define the application object for Gunicorn
+application = create_app()  # Gunicorn looks for "application" by default
 
 if __name__ == "__main__":
-    app.run(debug=True , port=config.Config.FLASK_RUN_PORT)
+    # Only used for local development
+    application.run(debug=True, port=config.Config.FLASK_RUN_PORT)
