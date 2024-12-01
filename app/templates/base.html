@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,20 +8,24 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Ensures the body stretches to fill the viewport */
-        html, body {
+        html,
+        body {
             height: 100%;
         }
+
         /* Ensures the main content takes available space between header and footer */
         #content-wrapper {
             display: flex;
             flex-direction: column;
             min-height: 100%;
         }
+
         #content {
             flex: 1;
         }
     </style>
 </head>
+
 <body class="bg-gray-100 text-gray-800">
     <div id="content-wrapper">
         <!-- Navbar -->
@@ -35,19 +40,61 @@
                         <div class="relative ml-4">
                             <button id="userMenuButton" class="flex items-center focus:outline-none">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="w-6 h-6" viewBox="0 0 24 24">
-                                    <path d="M12 12c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm0 2c-3.33 0-10 1.68-10 5v1h20v-1c0-3.32-6.67-5-10-5z"/>
+                                    <path
+                                        d="M12 12c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm0 2c-3.33 0-10 1.68-10 5v1h20v-1c0-3.32-6.67-5-10-5z" />
                                 </svg>
+                                {% if session.get("logged_in") %}
+                                <span class="ml-2">{{ session["user_name"] }}</span>
+                                {% endif %}
                             </button>
                             <div id="userMenu" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg hidden">
+                                {% if session.get("logged_in") %}
+                                <a href="/profile" class="block px-4 py-2 text-gray-800 hover:bg-blue-100">Profile</a>
+                                <a href="/logout" class="block px-4 py-2 text-gray-800 hover:bg-blue-100">Logout</a>
+                                {% else %}
                                 <a href="/login" class="block px-4 py-2 text-gray-800 hover:bg-blue-100">Login</a>
                                 <a href="/register" class="block px-4 py-2 text-gray-800 hover:bg-blue-100">Register</a>
+                                {% endif %}
                             </div>
                         </div>
+                        
                     </div>
                 </div>
             </div>
         </nav>
-
+        {% with messages = get_flashed_messages(with_categories=True) %}
+        {% if messages %}
+        <div class="container mx-auto mt-4">
+            {% for category, message in messages %}
+            <div id="alert-{{ loop.index }}"
+                class="flex items-center p-4 mb-4 text-white bg-{{ 'green' if category == 'success' else 'red' }}-600 rounded-lg"
+                role="alert">
+                <svg aria-hidden="true" class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd"
+                        d="M18 8A8 8 0 111.64 5.64 8 8 0 0118 8zM8.93 8a1 1 0 10-1.86-.72l-.33 1a1 1 0 00.21.92l.33.33a1 1 0 001.72-.42l.33-1z"
+                        clip-rule="evenodd"></path>
+                </svg>
+                <span class="sr-only">Info</span>
+                <div class="ml-3 text-sm font-medium">
+                    {{ message }}
+                </div>
+                <button type="button"
+                    class="ml-auto -mx-1.5 -my-1.5 bg-white text-gray-900 rounded-lg focus:ring-2 focus:ring-{{ 'green' if category == 'success' else 'red' }}-400 p-1.5 hover:bg-gray-100 inline-flex h-8 w-8"
+                    data-dismiss-target="#alert-{{ loop.index }}" aria-label="Close">
+                    <span class="sr-only">Close</span>
+                    <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd"
+                            d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                            clip-rule="evenodd"></path>
+                    </svg>
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
         <!-- Content -->
         <main id="content" class="container mx-auto px-2 py-4">
             {% block content %}{% endblock %}
@@ -69,9 +116,10 @@
         userMenuButton.addEventListener('click', () => {
             userMenu.classList.toggle('hidden');
         });
-        
+
     </script>
     <script src="https://cdn.jsdelivr.net/npm/flowbite@1.6.5/dist/flowbite.min.js"></script>
 
 </body>
+
 </html>
