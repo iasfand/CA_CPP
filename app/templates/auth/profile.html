@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Profile - SkyPort{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-6">
+    <h1 class="text-3xl font-bold mb-4">Profile</h1>
+    <div class="bg-white p-6 rounded-lg shadow-lg">
+        <p class="mb-2"><strong>Name:</strong> {{ user.name }}</p>
+        <p class="mb-2"><strong>Email:</strong> {{ user.email }}</p>
+        <p class="mb-2"><strong>Staff Type:</strong> {{ user.staff_type }}</p>
+        <p class="mb-2"><strong>Member Since:</strong> {{ user.created_at | format_date }}</p>
+    </div>
+</div>
+{% endblock %}
