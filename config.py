@@ -8,4 +8,10 @@ class Config:
     OPENAIP_API_KEY = os.environ.get("OPENAIP_API_KEY")
     OPENAIP_API_URL = os.environ.get("OPENAIP_API_URL")
     SESSION_SECRET = os.environ.get("SESSION_SECRET")
+    AWS_ACCESS_KEY = os.getenv("AWS_ACCESS_KEY_ID")
+    AWS_SECRET_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+    AWS_SESSION_TOKEN = os.getenv("AWS_SESSION_TOKEN")
+    AWS_REGION = os.getenv("AWS_REGION")
+    AWS_PROFILE_NAME = os.getenv("AWS_PROFILE_NAME")
+    DYNAMODB_TABLE_NAME = "skyport_users"
 
