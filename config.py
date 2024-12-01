@@ -14,4 +14,4 @@ class Config:
     AWS_REGION = os.getenv("AWS_REGION")
     AWS_PROFILE_NAME = os.getenv("AWS_PROFILE_NAME")
     DYNAMODB_TABLE_NAME = "skyport_users"
-
+    DYNAMODB_FAVS_TABLE_NAME = "skyport_favs"
