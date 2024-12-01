@@ -17,7 +17,7 @@ class Config:
     # AWS Credentials and Configuration
     AWS_PROFILE_NAME = os.getenv("AWS_PROFILE_NAME", "250738637992_MSCCLOUD")
     AWS_REGION = os.getenv("AWS_REGION", "eu-west-1")
-
+    
     # AWS Services Configuration
     DYNAMODB_USER_TABLE_NAME = os.getenv("DYNAMODB_USER_TABLE_NAME", "skyport_users")
     DYNAMODB_FAVS_TABLE_NAME = os.getenv("DYNAMODB_FAVS_TABLE_NAME", "skyport_favs")
