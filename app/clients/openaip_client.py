@@ -48,7 +48,6 @@ def fetch_airport(airport_id):
         dict: Parsed JSON response containing the airport details or None in case of an error.
     """
     base_url = f"{current_app.config['OPENAIP_API_URL']}/airports/{airport_id}?apiKey={current_app.config['OPENAIP_API_KEY']}"
-    print(base_url)
     try:
         response = requests.get(base_url)
         response.raise_for_status()
