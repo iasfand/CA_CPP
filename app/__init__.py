@@ -18,6 +18,9 @@ def create_app():
     app.jinja_env.filters["format_date"] = format_date
     app.jinja_env.filters["format_date_time"] = format_date_time
 
+    if not app.config.get("AWS_REGION"):
+        raise ValueError("AWS_REGION is not set in the app configuration.")
+
     # Initialize the AWS session with the specified profile and region
     aws_session = session.Session(
         profile_name=app.config["AWS_PROFILE_NAME"], 
@@ -31,15 +34,12 @@ def create_app():
     )
 
     # Initialize the DynamoDB resource using the session
-    app.dynamodb = aws_session.resource("dynamodb")
+    app.dynamodb = aws_session.resource("dynamodb", region_name=app.config["AWS_REGION"])
+    print(f"DynamoDB resource initialized with profile: {app.config['AWS_PROFILE_NAME']} and region: {app.config['AWS_REGION']}")
 
     # Initialize the S3 client using the session
     app.s3_client = aws_session.client("s3")
     print(f"S3 client initialized with profile: {app.config['AWS_PROFILE_NAME']}")
-
-    # Initialize the DynamoDB table
-    app.dynamodb_table = app.dynamodb.Table(app.config["DYNAMODB_TABLE_NAME"])
-    print(f"DynamoDB Table: {app.config['DYNAMODB_TABLE_NAME']} initialized.")
 
     # Configure CloudWatch logging
     cloudwatch_handler = watchtower.CloudWatchLogHandler(

@@ -25,7 +25,7 @@ def login_post():
             return redirect(url_for("auth.login"))
 
         # Query DynamoDB for the user
-        table = current_app.dynamodb.Table(current_app.config["DYNAMODB_TABLE_NAME"])
+        table = current_app.dynamodb.Table(current_app.config["DYNAMODB_USER_TABLE_NAME"])
         response = table.query(
             IndexName="email-index",
             KeyConditionExpression=boto3.dynamodb.conditions.Key("email").eq(email)
@@ -76,7 +76,7 @@ def register_post():
             flash("All fields are required.", "error")
             return redirect(url_for("auth.register"))
 
-        table = current_app.dynamodb.Table(current_app.config["DYNAMODB_TABLE_NAME"])
+        table = current_app.dynamodb.Table(current_app.config["DYNAMODB_USER_TABLE_NAME"])
         # Check if email is already registered
         response = table.query(
             IndexName="email-index",
@@ -133,7 +133,7 @@ def profile():
         user_id = session.get("user_id")
 
         # Query DynamoDB for the current user
-        table = current_app.dynamodb.Table(current_app.config["DYNAMODB_TABLE_NAME"])
+        table = current_app.dynamodb.Table(current_app.config["DYNAMODB_USER_TABLE_NAME"])
         response = table.get_item(Key={"user_id": user_id})
         # Check if user exists
         user = response.get("Item")
