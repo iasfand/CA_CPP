@@ -49,32 +49,55 @@
             <td class="border px-4 py-2">{{ airport.total_runways }}</td>
             <td class="border px-4 py-2 text-right">
                 <div class="relative inline-block">
-                    <form action="/airport/{{ airport.id }}/add_to_favorites" method="POST" class="inline-block">
-                        <button data-tooltip-target="tooltip-to-mark" class="text-gray-500 hover:text-red-600">
+                    <form
+                        action="/airport/{{ airport.id }}/{{ 'remove_from_favorites' if airport.is_favorite else 'add_to_favorites' }}"
+                        method="POST" class="inline-block"
+                        onsubmit="return confirm('{{ 'Remove this airport from your favorites?' if airport.is_favorite else 'Add this airport to your favorites?' }}')">
+
+                        <!-- Hidden Fields for Airport Name and Country -->
+                        <input type="hidden" name="airport_name" value="{{ airport.name }}">
+                        <input type="hidden" name="airport_country" value="{{ airport.country }}">
+
+                        <!-- Favorite Button -->
+                        <button
+                            data-tooltip-target="{{ 'tooltip-remove-mark' if airport.is_favorite else 'tooltip-to-mark' }}"
+                            class="{{ 'text-red-600 hover:text-red-800' if airport.is_favorite else 'text-gray-500 hover:text-red-600' }}">
+                            {% if airport.is_favorite %}
+                            <!-- Filled Heart SVG for Favorites -->
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24"
+                                stroke="currentColor" stroke-width="2" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M3.172 5.172a4 4 0 015.656 0L12 8.343l3.172-3.171a4 4 0 115.656 5.656L12 21.657 3.172 10.828a4 4 0 010-5.656z" />
+                            </svg>
+                            {% else %}
+                            <!-- Outline Heart SVG for Not Favorites -->
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                 stroke="currentColor" stroke-width="2" class="w-6 h-6">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M11.049 2.927c2.207-2.207 5.79-2.207 7.997 0 2.207 2.207 2.207 5.79 0 7.997L12 19.97 5.954 10.924c-2.207-2.207-2.207-5.79 0-7.997 2.207-2.207 5.79-2.207 7.997 0z" />
                             </svg>
+                            {% endif %}
                         </button>
-                        <div id="tooltip-to-mark" role="tooltip"
+
+                        <!-- Tooltip -->
+                        <div id="{{ 'tooltip-remove-mark' if airport.is_favorite else 'tooltip-to-mark' }}"
+                            role="tooltip"
                             class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
-                            Mark as Favorite
+                            {{ 'Remove from Favorites' if airport.is_favorite else 'Mark as Favorite' }}
                             <div class="tooltip-arrow" data-popper-arrow></div>
                         </div>
-                </div>
-                </form>
+                    </form>
 
-                <!-- Google Maps Icon -->
-                <a href="{{ airport.google_maps_link }}" target="_blank"
-                    class="inline-flex items-center justify-center w-10 h-10 text-blue-600 hover:text-blue-800"
-                    title="Open in Google Maps">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="w-6 h-6">
-                        <path
-                            d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
-                    </svg>
+                    <!-- Google Maps Icon -->
+                    <a href="{{ airport.google_maps_link }}" target="_blank"
+                        class="inline-flex items-center justify-center w-10 h-10 text-blue-600 hover:text-blue-800"
+                        title="Open in Google Maps">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="w-6 h-6">
+                            <path
+                                d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                        </svg>
 
-                </a>
+                    </a>
             </td>
         </tr>
         {% endfor %}

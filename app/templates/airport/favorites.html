@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}My Favorites - SkyPort{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-6">
+    <h1 class="text-2xl font-bold mb-6">My Favorites</h1>
+
+    {% if favorites %}
+    <table class="table-auto w-full bg-white shadow-md rounded border-collapse">
+        <thead>
+            <tr class="text-left bg-gray-700 text-white">
+                <th class="px-4 py-2">Name</th>
+                <th class="px-4 py-2">Country</th>
+                <th class="px-4 py-2 text-right">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for fav in favorites %}
+            <tr>
+                <td class="border px-4 py-2">
+                    <a href="/airport/{{ fav.airport_id }}" class="text-blue-600 hover:underline">{{ fav.airport_name
+                        }}</a>
+                </td>
+                <td class="border px-4 py-2">
+                    <img src="https://flagcdn.com/{{ fav.airport_country|lower }}.svg" width="50"
+                        alt="{{ fav.airport_country }}" class="h-6">
+                </td>
+                <td class="border px-4 py-2 text-right">
+                    <form action="/airport/{{ fav.airport_id }}/remove_from_favorites" method="POST"
+                        class="inline-block"
+                        onsubmit="return confirm('Are you sure you want to remove {{ fav.airport_name }} from your favorites?')">
+                        <button type="submit"
+                            class="px-4 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 focus:outline-none">
+                            Remove from Favorites
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="text-gray-600">You have no favorite airports.</p>
+    {% endif %}
+</div>
+{% endblock %}
