@@ -3,7 +3,7 @@ from boto3 import session
 from app.routes.main import main
 from app.routes.auth import auth
 from app.routes.airport import airport
-from app.utils.filters import format_date
+from app.utils.filters import format_date, format_date_time
 
 def create_app():
     app = Flask(__name__)
@@ -11,6 +11,7 @@ def create_app():
     app.secret_key = app.config["SESSION_SECRET"]
     
     app.jinja_env.filters["format_date"] = format_date
+    app.jinja_env.filters["format_date_time"] = format_date_time
 
     # Initialize the AWS session with the specified profile
     aws_session = session.Session(profile_name=app.config["AWS_PROFILE_NAME"])
@@ -20,6 +21,13 @@ def create_app():
         "dynamodb",
         region_name=app.config["AWS_REGION"]
     )
+    
+    app.s3_client = aws_session.client(
+            "s3",
+            region_name=app.config["AWS_REGION"],
+        )
+    
+    print(f"S3 client initialized with profile: {app.config['AWS_PROFILE_NAME']}")
 
     # Initialize the DynamoDB table
     app.dynamodb_table = app.dynamodb.Table(app.config["DYNAMODB_TABLE_NAME"])
