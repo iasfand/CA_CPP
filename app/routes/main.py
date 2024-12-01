@@ -1,9 +1,13 @@
 from flask import Blueprint, render_template, request
 from app.clients.openaip_client import fetch_openaip_data
-from app.libraries.preprocess import process_airports_data
+from app.libraries.preprocess import AirportProcessor
 import json
 
+
 main = Blueprint("main", __name__)
+
+# Initialize the AirportProcessor class
+processor = AirportProcessor()
 
 @main.route("/")
 def index():
@@ -23,7 +27,7 @@ def index():
     total_pages = data.get("totalPages" , (total_items + limit - 1) // limit)  # Calculate total pages
     from_page = (page - 1) * limit + 1
     to_page = min(page * limit, total_items)
-    processed_data = process_airports_data(airports)
+    processed_data = processor.process_airports_data(airports)
     return render_template(
         "index.html",
         title="Airports",
