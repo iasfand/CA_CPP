@@ -15,3 +15,5 @@ class Config:
     AWS_PROFILE_NAME = os.getenv("AWS_PROFILE_NAME")
     DYNAMODB_TABLE_NAME = "skyport_users"
     DYNAMODB_FAVS_TABLE_NAME = "skyport_favs"
+    S3_BUCKET_NAME = "skyport-bucket"
+    DYNAMODB_MEMO_TABLE_NAME = "skyport_memories"
