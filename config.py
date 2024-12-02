@@ -1,10 +1,12 @@
 from dotenv import load_dotenv
 import os
 
+# Load environment variables from a .env file
 load_dotenv()
 
-os.environ['AWS_SHARED_CREDENTIALS_FILE'] = './.aws/credentials'
-os.environ['AWS_CONFIG_FILE'] = './.aws/config'
+# Set environment variables for AWS credentials and config files
+os.environ['AWS_SHARED_CREDENTIALS_FILE'] = os.path.join(os.getenv("USERPROFILE"), '.aws', 'credentials')
+os.environ['AWS_CONFIG_FILE'] = os.path.join(os.getenv("USERPROFILE"), '.aws', 'config')
 
 class Config:
     # General App Configuration

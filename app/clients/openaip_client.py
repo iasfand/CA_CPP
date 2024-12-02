@@ -21,7 +21,8 @@ def fetch_openaip_data(endpoint, page=1, limit=100, country=None):
     }
     params = {
         "page": page,
-        "limit": limit
+        "limit": limit,
+        "apiKey": current_app.config['OPENAIP_API_KEY']
     }
 
     # Add country filter if provided
