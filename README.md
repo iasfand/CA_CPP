@@ -44,13 +44,13 @@ Before starting, ensure you have the following installed on your system:
    ```
    or:
    ```bash
-   python3 run.py
+   python3 application.py
    ```
 
 6. **Access the Application**  
-   The application will run on port `3000`. Open your browser and navigate to:
+   The application will run on port `5000`. Open your browser and navigate to:
    ```
-   http://localhost:3000
+   http://localhost:5000
    ```
 
 ## Additional Notes
